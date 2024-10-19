@@ -9,6 +9,7 @@ type Config = {
   CLIENT_SECRET: string;
   REDIRECT: string;
   COGNITO_DOMAIN: string;
+  COGNITO_USER_POOL_ID: string;
 };
 
 function loadConfig(): Config {
@@ -23,12 +24,14 @@ function loadConfig(): Config {
     CLIENT_SECRET: Joi.string().required(),
     REDIRECT: Joi.string().required(),
     COGNITO_DOMAIN: Joi.string().required(),
+    COGNITO_USER_POOL_ID: Joi.string().required(),
   })
     .unknown()
     .required();
   const { value: envVars, error } = envVarsSchema.validate(process.env);
   if (error) {
-    throw new Error(`Config validation error: ${error.message}`);
+    // throw new Error(`Config validation error: ${error}`);
+    throw error;
   }
 
   return {
@@ -38,6 +41,7 @@ function loadConfig(): Config {
     CLIENT_SECRET: envVars.CLIENT_SECRET,
     REDIRECT: envVars.REDIRECT,
     COGNITO_DOMAIN: envVars.COGNITO_DOMAIN,
+    COGNITO_USER_POOL_ID: envVars.COGNITO_USER_POOL_ID,
   };
 }
 const config = loadConfig();

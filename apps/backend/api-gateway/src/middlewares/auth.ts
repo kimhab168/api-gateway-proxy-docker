@@ -28,6 +28,8 @@ const verifier = CognitoJwtVerifier.create({
 export const checkVerifyToken = async (token: string) => {
   try {
     const payload = await verifier.verify(token);
+    console.log("payload: ", payload);
+
     return payload;
   } catch (error) {
     throw error;
@@ -178,21 +180,39 @@ function check(objPath: RouteConfig, n: number, newPath: string[]): boolean {
     return false;
   }
 }
-// export const authToken = async (
-//   req: Request,
-//   _res: Response,
-//   next: NextFunction
-// ) => {
-//   try {
-//     const { methodConfig } = req;
+export const authToken = async (
+  req: Request,
+  _res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { methodConfig } = req;
+    console.log("methodConfig: ", methodConfig);
+    if (methodConfig.authRequired) {
+      // if (methodConfig.authRequired) {
+      console.log(req.cookies);
 
-//     if (methodConfig.authRequired) {
-//       const token = req.cookies?.["access_token"];
-//       const payload = await verifier.verify(token);
-//     }
-//   } catch (error) {
-//     console.log("error: ", error);
+      const token = req.cookies?.["token_access"];
+      // if (!token) {
+      //   next(new Error("Please Login to continue..."));
+      // }
+      console.log("Hello you has been passed!");
+      console.log("token: ", token);
+      const payload = await checkVerifyToken(token);
+      console.log(payload);
+    }
+    next();
 
-//     next(error);
-//   }
-// };
+    // const payload = await verifier.verify(token);
+    // if (!payload) {
+    //   next(new Error("invalid token"));
+    // }
+
+    // next();
+    // }
+  } catch (error) {
+    console.log("error: ", error);
+
+    next(error);
+  }
+};

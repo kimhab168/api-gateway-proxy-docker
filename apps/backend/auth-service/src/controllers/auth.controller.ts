@@ -46,7 +46,7 @@ export class AuthController extends Controller {
       }
     }
   }
-  @Post("/confirm-signup")
+  @Post("/confirmSignup")
   @Tags("Confirm SignUp")
   async confirmSignup(@Body() reqBody: VerifyUserRequest) {
     try {

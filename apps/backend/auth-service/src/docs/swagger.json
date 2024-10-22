@@ -135,7 +135,7 @@
 				}
 			}
 		},
-		"/auth/confirm-signup": {
+		"/auth/confirmSignup": {
 			"post": {
 				"operationId": "ConfirmSignup",
 				"responses": {

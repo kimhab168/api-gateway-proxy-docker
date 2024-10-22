@@ -1,5 +1,6 @@
 // import config from "@/config";
-
+const authTarget = "http://localhost:4002";
+const productTarget = "http://localhost:4001/v2";
 export interface RouteConfig {
   path: string;
   target?: string;
@@ -9,7 +10,7 @@ export interface RouteConfig {
       roles?: string[]; //handle position of role on accessing
     };
   };
-  nestedRoutes?: RouteConfig[]; //nested route as object
+  nestedRoutes?: RouteConfig[] | undefined; //nested route as object
 }
 export interface RouteConfigs {
   [route: string]: RouteConfig;
@@ -17,7 +18,7 @@ export interface RouteConfigs {
 export const ROUTE_PATH: RouteConfigs = {
   AUTH_SERVICE: {
     path: "/auth",
-    target: "http://auth-service:4002",
+    target: authTarget,
     nestedRoutes: [
       //for handle validation of route
       {
@@ -63,7 +64,12 @@ export const ROUTE_PATH: RouteConfigs = {
     ],
   },
   PRODUCT_SERVICE: {
-    path: "/v2/product",
-    target: "http://product-service:4001",
+    path: "/product",
+    target: productTarget,
+    method: {
+      GET: {
+        authRequired: true,
+      },
+    },
   },
 };

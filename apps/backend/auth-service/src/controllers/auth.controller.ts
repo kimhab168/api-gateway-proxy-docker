@@ -3,20 +3,11 @@ import { Controller, Route, Get, Tags, Post, Body, Request } from "tsoa";
 import express from "express";
 import authService from "@/services/auth.service";
 import { setCookies } from "@/utils/cookies";
-interface SignUpType {
-  username?: string;
-  email: string;
-  password: string;
-}
-
-interface VerifySignup {
-  username: string;
-  code: string;
-}
-interface SignIn {
-  username: string;
-  password: string;
-}
+import {
+  SignInRequest,
+  SignUpRequest,
+  VerifyUserRequest,
+} from "./types/auth.types";
 
 @Route("/auth")
 export class AuthController extends Controller {
@@ -29,12 +20,16 @@ export class AuthController extends Controller {
     try {
       return loginWithGoogle();
     } catch (error) {
+      // console.log("error,,,,,,,,,,,,,,,,,,,,,,,,,,,,");
+
       throw error;
     }
   }
   @Post("/signup")
   @Tags("SignUp")
-  async signup(@Body() reqBody: SignUpType) {
+  async signup(
+    @Body() reqBody: SignUpRequest
+  ): Promise<{ message: string; required?: string }> {
     try {
       await authService.signup(reqBody);
       return {
@@ -42,15 +37,20 @@ export class AuthController extends Controller {
         required: "Please Confirm Verificatino",
       };
     } catch (error) {
-      throw error;
+      //@ts-ignore
+      if (error.name === "UsernameExistsException") {
+        this.setStatus(403);
+        return { message: "User already exist!" };
+      } else {
+        throw error;
+      }
     }
   }
   @Post("/confirm-signup")
   @Tags("Confirm SignUp")
-  async confirmSignup(@Body() reqBody: VerifySignup) {
+  async confirmSignup(@Body() reqBody: VerifyUserRequest) {
     try {
       await authService.confirmSignup(reqBody);
-      //TODO: Save the user data to database
       return {
         message: "Success Verify! You can now Logged in",
       };
@@ -60,7 +60,7 @@ export class AuthController extends Controller {
   }
   @Post("/login")
   @Tags("Login")
-  async login(@Body() reqBody: SignIn, @Request() req: express.Request) {
+  async login(@Body() reqBody: SignInRequest, @Request() req: express.Request) {
     try {
       const tokens = await authService.login(reqBody);
       const tokenParams = {

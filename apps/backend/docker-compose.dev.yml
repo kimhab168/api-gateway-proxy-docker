@@ -13,6 +13,7 @@ services:
       - DOCKER_ENV=true
       - PRODUCT_SERVICE_URL=http://product-service:4001
       - AUTH_SERVICE_URL=http://auth-service:4002
+      - USER_SERVICE_URL=http://user-service:4003
     volumes:
       - ./api-gateway/src:/app/src # HOT RELOADING
   product-service:
@@ -28,6 +29,7 @@ services:
       - DOCKER_ENV=true
       - PRODUCT_SERVICE_URL=http://product-service:4001
       - AUTH_SERVICE_URL=http://auth-service:4002
+      - USER_SERVICE_URL=http://user-service:4003
     volumes:
       - ./product-service/src:/app/src # HOT RELOADING
   auth-service:
@@ -43,5 +45,22 @@ services:
       - DOCKER_ENV=true
       - PRODUCT_SERVICE_URL=http://product-service:4001
       - AUTH_SERVICE_URL=http://auth-service:4002
+      - USER_SERVICE_URL=http://user-service:4003
     volumes:
       - ./auth-service/src:/app/src # HOT RELOADING
+  user-service:
+    container_name: user_service_container
+    build:
+      context: ./user-service
+      dockerfile: Dockerfile.dev
+    restart: always
+    ports:
+      - 4003:4003
+    env_file: ./user-service/src/configs/.env.development
+    environment:
+      - DOCKER_ENV=true
+      - PRODUCT_SERVICE_URL=http://product-service:4001
+      - AUTH_SERVICE_URL=http://auth-service:4002
+      - USER_SERVICE_URL=http://user-service:4003
+    volumes:
+      - ./user-service/src:/app/src # HOT RELOADING

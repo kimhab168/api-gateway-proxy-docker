@@ -7,7 +7,7 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
-			"SignUpType": {
+			"SignUpRequest": {
 				"properties": {
 					"username": {
 						"type": "string"
@@ -26,7 +26,7 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"VerifySignup": {
+			"VerifyUserRequest": {
 				"properties": {
 					"username": {
 						"type": "string"
@@ -42,7 +42,7 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"SignIn": {
+			"SignInRequest": {
 				"properties": {
 					"username": {
 						"type": "string"
@@ -110,7 +110,6 @@
 										}
 									},
 									"required": [
-										"required",
 										"message"
 									],
 									"type": "object"
@@ -129,7 +128,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/SignUpType"
+								"$ref": "#/components/schemas/SignUpRequest"
 							}
 						}
 					}
@@ -169,7 +168,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/VerifySignup"
+								"$ref": "#/components/schemas/VerifyUserRequest"
 							}
 						}
 					}
@@ -209,7 +208,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/SignIn"
+								"$ref": "#/components/schemas/SignInRequest"
 							}
 						}
 					}

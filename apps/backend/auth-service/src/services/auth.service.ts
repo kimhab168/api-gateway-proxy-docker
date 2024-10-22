@@ -1,4 +1,8 @@
 import {
+  AdminAddUserToGroupCommand,
+  AdminAddUserToGroupCommandInput,
+  AdminGetUserCommand,
+  AdminGetUserCommandInput,
   CognitoIdentityProviderClient,
   ConfirmSignUpCommand,
   ConfirmSignUpCommandInput,
@@ -11,15 +15,11 @@ import {
 import { createHmac } from "crypto";
 
 import config from "@/config";
-interface SignUpType {
-  username?: string;
-  email: string;
-  password: string;
-}
-interface VerifySignup {
-  username: string;
-  code: string;
-}
+import {
+  SignUpRequest,
+  VerifyUserRequest,
+} from "@/controllers/types/auth.types";
+import axios from "axios";
 
 const client = new CognitoIdentityProviderClient({ region: "us-east-1" });
 
@@ -29,26 +29,32 @@ class AuthService {
       .update(username + config.CLIENT_ID)
       .digest("base64");
   }
-  async signup(body: SignUpType) {
-    const input: SignUpCommandInput = {
-      // SignUpRequest
-      ClientId: config.CLIENT_ID,
-      SecretHash: this.createHmacSecret(body.username || body.email),
-      Username: body.username || body.email,
-      Password: body.password,
-      UserAttributes: [
-        {
-          Name: "email",
-          Value: body.email,
-        },
-      ],
-    };
+  async signup(body: SignUpRequest) {
+    try {
+      const input: SignUpCommandInput = {
+        // SignUpRequest
+        ClientId: config.CLIENT_ID,
+        SecretHash: this.createHmacSecret(body.username || body.email),
+        Username: body.username || body.email,
+        Password: body.password,
+        UserAttributes: [
+          {
+            Name: "email",
+            Value: body.email,
+          },
+        ],
+      };
 
-    const command = new SignUpCommand(input);
-    const res = await client.send(command);
-    return res;
+      const command = new SignUpCommand(input);
+      console.log("auth service on client.send");
+
+      const res = await client.send(command);
+      return res;
+    } catch (error) {
+      throw error;
+    }
   }
-  async confirmSignup(req: VerifySignup) {
+  async confirmSignup(req: VerifyUserRequest) {
     const input: ConfirmSignUpCommandInput = {
       // ConfirmSignUpRequest
       ClientId: config.CLIENT_ID, // required
@@ -56,9 +62,35 @@ class AuthService {
       Username: req.username, // required
       ConfirmationCode: req.code, // required
     };
-    const command = new ConfirmSignUpCommand(input);
-    const res = await client.send(command);
-    return res;
+    try {
+      const command = new ConfirmSignUpCommand(input);
+      // console.log("auth service above client.send");
+
+      const res = await client.send(command);
+      // console.log("hi bro error");
+
+      const userInfo = await this.getUserByUsername(req.username);
+
+      // console.log("UserInfo", userInfo);
+      //add user to group
+      await this.addToGroup(req.username);
+      //add to DB
+      const email = userInfo.UserAttributes?.filter(
+        (attr) => attr.Name === "email"
+      )[0]?.Value;
+
+      console.log(email);
+
+      await axios.post("http://localhost:4003/v1/users", {
+        sub: userInfo.Username,
+        email: email,
+      });
+      // console.log("user added to DB");
+
+      return res;
+    } catch (error) {
+      throw error;
+    }
   }
   async login(req: { username: string; password: string }) {
     const input: InitiateAuthCommandInput = {
@@ -73,6 +105,37 @@ class AuthService {
     const command = new InitiateAuthCommand(input);
     const res = await client.send(command);
     return res.AuthenticationResult;
+  }
+  async addToGroup(username: string, groupName: string = "user") {
+    try {
+      const params: AdminAddUserToGroupCommandInput = {
+        GroupName: groupName,
+        Username: username,
+        UserPoolId: config.COGNITO_USER_POOL_ID,
+      };
+      const command = new AdminAddUserToGroupCommand(params);
+      await client.send(command);
+      console.log(
+        `AuthService confirmSignup() method: User added to ${groupName}`
+      );
+    } catch (error) {
+      throw error;
+    }
+  }
+  async getUserByUsername(username: string) {
+    const params: AdminGetUserCommandInput = {
+      Username: username,
+      UserPoolId: config.COGNITO_USER_POOL_ID,
+    };
+    try {
+      const command = new AdminGetUserCommand(params);
+      const userInfo = await client.send(command);
+      return userInfo;
+    } catch (error) {
+      console.error("AuthService getUserByUsername() error", error);
+
+      throw error;
+    }
   }
 }
 export default new AuthService();

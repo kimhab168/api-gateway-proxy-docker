@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "install": "concurrently \"yarn workspace product-service \"  \"yarn workspace auth-service \" \"yarn workspace api-gateway \"",
-    "start": "concurrently \"yarn workspace product-service dev\"  \"yarn workspace auth-service dev\" \"yarn workspace api-gateway dev\"",
+    "start": "concurrently \"yarn workspace product-service dev\"  \"yarn workspace auth-service dev\" \"yarn workspace api-gateway dev\" \"yarn workspace user-service dev\"",
     "start:camformant-client": "yarn workspace camformant-client dev",
     "start:dashboard": "concurrently \"yarn workspace ms-ui-components watch\" \"yarn workspace camformant-dashboard dev\"",
     "start:product-service": "yarn workspace product-service dev",

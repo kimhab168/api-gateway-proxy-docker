@@ -5,11 +5,7 @@ import Joi from "joi";
 type Config = {
   NODE_ENV: string;
   PORT: number;
-  CLIENT_ID: string;
-  CLIENT_SECRET: string;
-  REDIRECT: string;
-  COGNITO_DOMAIN: string;
-  COGNITO_USER_POOL_ID: string;
+  MONGO_URL: string;
 };
 
 function loadConfig(): Config {
@@ -20,11 +16,7 @@ function loadConfig(): Config {
   const envVarsSchema = Joi.object({
     NODE_ENV: Joi.string().required(),
     PORT: Joi.number().required(),
-    CLIENT_ID: Joi.string().required(),
-    CLIENT_SECRET: Joi.string().required(),
-    REDIRECT: Joi.string().required(),
-    COGNITO_DOMAIN: Joi.string().required(),
-    COGNITO_USER_POOL_ID: Joi.string().required(),
+    MONGO_URL: Joi.string().required(),
   })
     .unknown()
     .required();
@@ -36,11 +28,7 @@ function loadConfig(): Config {
   return {
     NODE_ENV: envVars.NODE_ENV,
     PORT: envVars.PORT,
-    CLIENT_ID: envVars.CLIENT_ID,
-    CLIENT_SECRET: envVars.CLIENT_SECRET,
-    REDIRECT: envVars.REDIRECT,
-    COGNITO_DOMAIN: envVars.COGNITO_DOMAIN,
-    COGNITO_USER_POOL_ID: envVars.COGNITO_USER_POOL_ID,
+    MONGO_URL: envVars.MONGO_URL,
   };
 }
 const config = loadConfig();

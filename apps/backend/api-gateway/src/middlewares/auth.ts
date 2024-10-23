@@ -2,7 +2,7 @@ import config from "@/config";
 import { ROUTE_PATH, RouteConfig } from "@/route-defs";
 import { CognitoJwtVerifier } from "aws-jwt-verify";
 import { NextFunction, Request, Response } from "express";
-
+import { jwtDecode } from "jwt-decode";
 declare global {
   namespace Express {
     interface Request {
@@ -193,23 +193,29 @@ export const authToken = async (
       console.log(req.cookies);
 
       const token = req.cookies?.["token_access"];
-      // if (!token) {
-      //   next(new Error("Please Login to continue..."));
-      // }
+      const idToken = req.cookies?.["token_id"];
+      if (!token || !idToken) {
+        next(new Error("Please Login to continue..."));
+      }
+
       console.log("Hello you has been passed!");
       console.log("token: ", token);
       const payload = await checkVerifyToken(token);
-      console.log(payload);
+      // console.log(payload);
+      if (!payload) {
+        throw new Error("Error Authentication");
+      }
+      const userPayload = await jwtDecode(idToken);
+      if (!userPayload) {
+        throw new Error("Error Authentication");
+      }
+      const role = payload["cognito:groups"] || [];
+      req.currentUser = {
+        username: payload.username,
+        role,
+      };
     }
     next();
-
-    // const payload = await verifier.verify(token);
-    // if (!payload) {
-    //   next(new Error("invalid token"));
-    // }
-
-    // next();
-    // }
   } catch (error) {
     console.log("error: ", error);
 

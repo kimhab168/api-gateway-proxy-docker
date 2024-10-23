@@ -16,9 +16,10 @@ export class AuthController extends Controller {
   }
   @Get("/link")
   @Tags("google link")
-  public async getLink(): Promise<string> {
+  public async getLink() {
     try {
-      return loginWithGoogle();
+      const link = loginWithGoogle();
+      return { link: link };
     } catch (error) {
       // console.log("error,,,,,,,,,,,,,,,,,,,,,,,,,,,,");
 

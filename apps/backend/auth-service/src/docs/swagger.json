@@ -79,7 +79,15 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"type": "string"
+									"properties": {
+										"link": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"link"
+									],
+									"type": "object"
 								}
 							}
 						}

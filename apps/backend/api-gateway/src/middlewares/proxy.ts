@@ -2,7 +2,7 @@ import { ROUTE_PATH } from "@/route-defs";
 import { createProxyMiddleware, Options } from "http-proxy-middleware";
 import express, { Response } from "express";
 // import { logRequest } from "@/utils/logger";
-import { IncomingMessage } from "http";
+import { ClientRequest, IncomingMessage } from "http";
 // import { gatewayLogger } from "@/server";
 interface ProxyConfigs {
   [context: string]: Options<IncomingMessage, Response>;
@@ -13,6 +13,29 @@ const proxyConfigs: ProxyConfigs = {
     target: ROUTE_PATH.AUTH_SERVICE.target,
     pathRewrite: (path, _req) => {
       return `${ROUTE_PATH.AUTH_SERVICE.path}${path}`;
+    },
+    on: {
+      proxyReq: (
+        _proxyReq: ClientRequest,
+        _req: IncomingMessage,
+        _res: Response
+      ) => {},
+      proxyRes: (proxyRes, _req, res) => {
+        const cookies = proxyRes.headers["set-cookie"];
+        if (cookies) {
+          res.setHeader("set-cookie", cookies);
+        }
+        res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+        res.setHeader("Access-Control-Allow-Credentials", "true");
+        // res.setHeader(
+        //   "Access-Control-Allow-Methods",
+        //   corsOptions.methods.join(", ")
+        // );
+        res.setHeader(
+          "Access-Control-Allow-Headers",
+          "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+        );
+      },
     },
     // on: {
     //   proxyReq: (

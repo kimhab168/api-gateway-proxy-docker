@@ -3,9 +3,9 @@ import express, { Request, Response, NextFunction } from "express";
 // import { customeLogger } from "./utils/logger";
 import applyProxy from "./middlewares/proxy";
 import cookieParser from "cookie-parser";
-// import corsOptions from "./middlewares/cors";
 import cors from "cors";
-// import { authToken, routeConfigMiddleware } from "./middlewares/auth";
+import { authToken, routeConfigMiddleware } from "./middlewares/auth";
+import corsOptions from "./middlewares/cors";
 // import { checkVerifyToken } from "./middlewares/auth";
 // ========================
 // Initialize App Express
@@ -16,7 +16,7 @@ const app = express();
 // Security Middleware
 //====================
 app.use(cookieParser());
-app.use(cors());
+app.use(cors(corsOptions));
 
 app.get("/", (_req: express.Request, res: express.Response) => {
   res.send("CORS-enabled for all origins");
@@ -25,8 +25,8 @@ app.get("/", (_req: express.Request, res: express.Response) => {
 //=================
 // AUTH Middleware
 //=================
-// app.use(routeConfigMiddleware);
-// app.use(authToken);
+app.use(routeConfigMiddleware);
+app.use(authToken);
 
 // app.use(cors(corsOptions));
 // ========================

@@ -222,6 +222,36 @@
 					}
 				}
 			}
+		},
+		"/auth/getCookies": {
+			"get": {
+				"operationId": "GetCookies",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Tokens/Cookies"
+				],
+				"security": [],
+				"parameters": []
+			}
 		}
 	},
 	"servers": [

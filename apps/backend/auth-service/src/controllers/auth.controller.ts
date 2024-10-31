@@ -79,4 +79,28 @@ export class AuthController extends Controller {
       throw error;
     }
   }
+  @Get("/getCookies")
+  @Tags("Tokens/Cookies")
+  async getCookies(@Request() req: express.Request) {
+    try {
+      const reqBody: SignInRequest = {
+        username: "kimhab",
+        password: "Mrkimhab20@",
+      };
+      const tokens = await authService.login(reqBody);
+      const tokenParams = {
+        token_id: tokens?.IdToken!,
+        token_access: tokens?.AccessToken!,
+        refresh_token: tokens?.RefreshToken!,
+      };
+      const res = req.res as express.Response;
+      // console.log(tokens);
+      setCookies(res, tokenParams);
+      return {
+        message: "Loggined Success!",
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
 }

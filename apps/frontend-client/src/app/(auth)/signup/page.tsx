@@ -96,21 +96,6 @@ export default function Home() {
                 onChange={onChange}
               />
             </div>
-            <div className="flex">
-              <button
-                className="text-3xl font-bold rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-                rel="noopener noreferrer"
-                type="submit"
-              >
-                Login
-              </button>
-              <button
-                className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-                rel="noopener noreferrer"
-              >
-                Register
-              </button>
-            </div>
             <div className="flex gap-1 justify-center items-center">
               <input
                 type="checkbox"
@@ -119,6 +104,22 @@ export default function Home() {
                 checked={isShow}
               />
               <span>Show password</span>
+            </div>
+            <div className="flex">
+              <button
+                className="text-3xl font-bold rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] sm:text-base h-10 sm:h-12 px-4 sm:px-5"
+                rel="noopener noreferrer"
+                type="submit"
+              >
+                SignUp
+              </button>
+              <button
+                className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
+                rel="noopener noreferrer"
+                onClick={() => route.push("/")}
+              >
+                Back to Login
+              </button>
             </div>
           </form>
           <div className="bg-white p-5 flex gap-x-4 justify-center items-center rounded-full">

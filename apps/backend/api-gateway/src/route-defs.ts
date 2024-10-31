@@ -38,6 +38,14 @@ export const ROUTE_PATH: RouteConfigs = {
         },
       },
       {
+        path: "/getCookies",
+        method: {
+          GET: {
+            authRequired: false,
+          },
+        },
+      },
+      {
         path: "/signup",
         method: {
           POST: {

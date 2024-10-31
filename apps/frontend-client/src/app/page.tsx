@@ -23,6 +23,7 @@ export default function Home() {
         headers: {
           "Content-Type": "application/json", // Set the content type
         },
+        credentials: "include",
         body: JSON.stringify({
           username: object.username,
           password: object.password,
